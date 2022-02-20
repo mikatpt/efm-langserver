@@ -137,14 +137,14 @@ Configs:
 
 		formatted = true
 
-		if h.loglevel >= 3 {
+		if h.loglevel >= INFO {
 			h.logger.Println(command+":", string(b))
 		}
 		text = strings.Replace(string(b), "\r", "", -1)
 	}
 
 	if formatted {
-		if h.loglevel >= 3 {
+		if h.loglevel >= INFO {
 			h.logger.Println("format succeeded")
 		}
 		return ComputeEdits(uri, originalText, text), nil

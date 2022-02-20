@@ -124,7 +124,7 @@ func (h *langHandler) hover(uri DocumentURI, params *HoverParams) (*Hover, error
 		if err != nil {
 			return nil, err
 		}
-		if h.loglevel >= 3 {
+		if h.loglevel >= INFO {
 			h.logger.Println(command+":", string(b))
 		}
 

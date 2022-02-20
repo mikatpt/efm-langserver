@@ -26,7 +26,7 @@ import (
 type Config struct {
 	Version        int                    `yaml:"version"`
 	LogFile        string                 `yaml:"log-file"`
-	LogLevel       int                    `yaml:"log-level"       json:"logLevel"`
+	LogLevel       LogLevel               `yaml:"log-level"       json:"logLevel"`
 	Commands       *[]Command             `yaml:"commands"        json:"commands"`
 	Languages      *map[string][]Language `yaml:"languages"       json:"languages"`
 	RootMarkers    *[]string              `yaml:"root-markers"    json:"rootMarkers"`
@@ -107,7 +107,7 @@ func NewHandler(config *Config) jsonrpc2.Handler {
 }
 
 type langHandler struct {
-	loglevel          int
+	loglevel          LogLevel
 	logger            *log.Logger
 	commands          []Command
 	configs           map[string][]Language
@@ -434,7 +434,7 @@ func (h *langHandler) lint(ctx context.Context, uri DocumentURI) (map[DocumentUR
 			h.logMessage(LogError, "command `"+command+"` exit with zero. probably you forgot to specify `lint-ignore-exit-code: true`.")
 			continue
 		}
-		if h.loglevel >= 3 {
+		if h.loglevel >= INFO {
 			h.logger.Println(command+":", string(b))
 		}
 		var source *string

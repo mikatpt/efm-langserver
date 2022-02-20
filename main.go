@@ -26,18 +26,20 @@ var revision = "HEAD"
 func main() {
 	var yamlfile string
 	var logfile string
-	var loglevel int
+	var loglvl int
 	var dump bool
 	var showVersion bool
 	var quiet bool
 
 	flag.StringVar(&yamlfile, "c", "", "path to config.yaml")
 	flag.StringVar(&logfile, "logfile", "", "logfile")
-	flag.IntVar(&loglevel, "loglevel", 1, "loglevel")
+	flag.IntVar(&loglvl, "loglevel", 1, "loglevel")
 	flag.BoolVar(&dump, "d", false, "dump configuration")
 	flag.BoolVar(&showVersion, "v", false, "Print the version")
 	flag.BoolVar(&quiet, "q", false, "Run quieter")
 	flag.Parse()
+
+	loglevel := langserver.SetLogLevel(loglvl)
 
 	if showVersion {
 		fmt.Printf("%s %s (rev: %s/%s)\n", name, version, revision, runtime.Version())
@@ -89,8 +91,8 @@ func main() {
 	if logfile == "" {
 		logfile = config.LogFile
 	}
-	if config.LogLevel > 0 {
-		loglevel = config.LogLevel
+	if config.LogLevel == 0 {
+		config.LogLevel = loglevel
 	}
 
 	var connOpt []jsonrpc2.ConnOpt
@@ -102,12 +104,12 @@ func main() {
 		}
 		defer f.Close()
 		config.Logger = log.New(f, "", log.LstdFlags)
-		if loglevel >= 5 {
+		if config.LogLevel >= langserver.TRACE {
 			connOpt = append(connOpt, jsonrpc2.LogMessages(config.Logger))
 		}
 	}
 
-	if quiet && (logfile == "" || loglevel < 5) {
+	if quiet && (logfile == "" || config.LogLevel < langserver.TRACE) {
 		connOpt = append(connOpt, jsonrpc2.LogMessages(log.New(ioutil.Discard, "", 0)))
 	}
 
