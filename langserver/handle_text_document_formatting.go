@@ -31,7 +31,7 @@ func (h *langHandler) handleTextDocumentFormatting(ctx context.Context, conn *js
 
 func (h *langHandler) formatRequest(uri DocumentURI, opt FormattingOptions) ([]TextEdit, error) {
 	if h.formatTimer != nil {
-		if h.loglevel >= 4 {
+		if h.loglevel >= DEBUG {
 			h.logger.Printf("format debounced: %v", h.formatDebounce)
 		}
 		return []TextEdit{}, nil
@@ -75,7 +75,7 @@ func (h *langHandler) formatting(uri DocumentURI, options FormattingOptions) ([]
 	}
 
 	if len(configs) == 0 {
-		if h.loglevel >= 1 {
+		if h.loglevel >= WARN {
 			h.logger.Printf("format for LanguageID not supported: %v", f.LanguageID)
 		}
 		return nil, nil
